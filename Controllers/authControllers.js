@@ -33,7 +33,7 @@ module.exports.getAuthRegister = (req, res) => {
     res.render('register');
 }
 
-module.exports.UpostAuthRegister = async(req, res) => {
+module.exports.postAuthRegister = async(req, res) => {
     const { email, password } = req.body;
 
     try {

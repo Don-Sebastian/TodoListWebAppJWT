@@ -16,6 +16,8 @@ module.exports.getTodoHome = async(req, res) => {
 }
 
 module.exports.postAddToken = async (req, res) => {
+
+  
     const { task, priority } = req.body;
     const userId = req.userId;
     try {
@@ -51,8 +53,6 @@ module.exports.putUpdateStatus = async (req, res) => {
         if (!updatedTask) {
             return res.status(404).send("Task not found");
         }
-        console.log(updatedTask.tasks.id(taskId));
-
         res.status(200).send({ updatedTask: updatedTask.tasks.id(taskId) });
     } catch (err) {
         console.error(err);
