@@ -2,6 +2,7 @@ require('dotenv/config');
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 const AuthRouter = require('./Routes/AuthRouter');
 const TodoRouter = require('./Routes/TodoRouter');
 const {authMiddleware, checkUser, guestMiddleware} = require('./Middleware/authMiddleware');
@@ -15,6 +16,7 @@ app.use(cookieParser());
 
 // view engine
 app.set('view engine', 'ejs');
+app.set("views", path.join(__dirname, "./Views"));
 
 const { PORT } = process.env;
 
@@ -28,4 +30,4 @@ mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTop
 // routes
 app.use("*", checkUser);
 app.use("/", AuthRouter);
-app.use('/' ,authMiddleware, TodoRouter);
+app.use('/', authMiddleware, TodoRouter);
