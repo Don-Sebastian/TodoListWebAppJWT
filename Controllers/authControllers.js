@@ -5,11 +5,11 @@ const handleErrors = (err) => {
     let errors = { email: '', password: '' };
 
     if (err.code === 11000) {
-        console.log(err);
+        console.error(err);
         errors.email = 'This email is already registered';
         return errors;
     };
-    console.log(err);
+    console.error(err);
     // validate errors
     if (err.message.includes("user validation failed")) {
         Object.values(err.errors).forEach(({ properties }) => {
