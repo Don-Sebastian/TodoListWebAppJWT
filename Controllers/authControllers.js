@@ -30,8 +30,7 @@ const createToken = (id) => {
 };
 
 module.exports.getAuthRegister = (req, res) => {
-    res.send({ titie: "hellooooo"})
-    // res.render('register');
+    res.render('register');
 }
 
 module.exports.postAuthRegister = async(req, res) => {
