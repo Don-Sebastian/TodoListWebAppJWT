@@ -1,0 +1,128 @@
+<%- include('partials/header') -%>
+
+<div class="container my-4">
+  <h1 class="text-center mb-4">My Todo List</h1>
+
+  <div class="" style="max-width: 200px;
+    float: right;">
+   <label for="submitBtn">&nbsp;</label>
+    <a href="/report" class="btn btn-secondary form-control text-white" id="submitBtn">
+      Report
+    </a>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="col-md-8">
+        <label for="newTodo">New Todo</label>
+        <input
+          type="text"
+          class="form-control"
+          id="newTodo"
+          name="task"
+          placeholder="Enter todo"
+        />
+      </div>
+      <div class="col">
+        <label for="priority">Priority</label>
+        <select class="form-control" name="priority" id="priority">
+          <option value="1">1 (Lowest)</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5 (Medium)</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9 (Highest)</option>
+        </select>
+      </div>
+      <div class="col">
+        <label for="submitBtn">&nbsp;</label>
+        <button
+          type="submit"
+          class="btn btn-primary form-control"
+          id="submitBtn"
+        >
+          Add Todo
+        </button>
+      </div>
+    </div>
+  </form>
+  <ul class="list-group mt-4" id="task-list">
+    <% tasks.forEach((eachTask, index) => { if (eachTask.status !== "deleted")
+    {%>
+    <li
+      id="list-<%=eachTask._id%>"
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      <%=++index %>. <%=eachTask.task%> (<%=eachTask.priority%>) <% if
+      (eachTask.status === "completed") { %>
+      <span id="<%=eachTask._id%>" class="badge badge-primary badge-pill"
+        >✓</span
+      >
+      <% } else if (eachTask.status === "canceled") { %>
+      <span id="<%=eachTask._id%>" class="badge badge-danger badge-pill"
+        >X</span
+      >
+      <% } else if (eachTask.status === "pending") { %>
+      <span id="<%=eachTask._id%>" class="">
+        <div style="max-width: 200px">
+          <select class="form-control" name="<%=eachTask._id%>" id="status">
+            <option value="pending">pending</option>
+            <option value="canceled">cancel</option>
+            <option value="completed">complete</option>
+            <option value="deleted">delete</option>
+          </select>
+        </div>
+      </span>
+      <% } %>
+    </li>
+    <% }%> <% }); %>
+  </ul>
+</div>
+<
+
+<script>
+  const form = document.querySelector("form");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const task = form.task.value;
+    const priority = form.priority.value;
+
+    try {
+      const response = await fetch("/api/v1/add-token", {
+        method: "POST",
+        body: JSON.stringify({ task, priority }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (data.errors) {
+        console.error(data.errors);
+      }
+      location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  const statusSelect = document.querySelector("#status");
+  statusSelect.addEventListener("change", async (e) => {
+    e.preventDefault();
+    const newStatus = e.target.value;
+    const taskId = e.target.name;
+    try {
+      const response = await fetch(`api/v1/update-status/${taskId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  });
+</script>
+
+<%- include('partials/footer') -%>

@@ -1,0 +1,107 @@
+<%- include('partials/header') -%>
+<div class="container my-5">
+  <h1 class="mb-3">Task Report</h1>
+  <div class="row">
+    <div class="col-md-4">
+      <h4>Counts</h4>
+      <ul class="list-group">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          Pending
+          <span class="badge badge-primary badge-pill"
+            ><%= pendingCount %></span
+          >
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          Canceled
+          <span class="badge badge-danger badge-pill"
+            ><%= canceledCount %></span
+          >
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          Deleted
+          <span class="badge badge-secondary badge-pill"
+            ><%= deletedCount %></span
+          >
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          Completed
+          <span class="badge badge-success badge-pill"
+            ><%= completedCount %></span
+          >
+        </li>
+      </ul>
+    </div>
+    <div>
+      <div class="form-group">
+        <label for="status-filter">Filter by Status:</label>
+        <select id="status-filter" class="form-control">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="canceled">Canceled</option>
+          <option value="completed">Completed</option>
+          <option value="deleted">Deleted</option>
+        </select>
+      </div>
+      <div class="mt-5">
+        <ul id="task-list" class="list-group"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tasksFilter = {
+    pending: [],
+    canceled: [],
+    completed: [],
+    deleted: [],
+  };
+
+  function renderTaskList(status) {
+    $("#task-list").empty();
+
+    const filteredTasks = status
+      ? tasksFilter[status]
+      : Object.values(tasksFilter).flat();
+
+    filteredTasks.sort((a, b) => b.priority - a.priority);
+
+    filteredTasks.forEach((task) => {
+      const badgeText =
+        task.status === "completed"
+          ? "✓"
+          : task.status === "canceled"
+          ? "X"
+          : "";
+      const badgeClass =
+        task.status === "completed"
+          ? "badge-primary"
+          : task.status === "canceled"
+          ? "badge-danger"
+          : "";
+      const listItem = `<li class="list-group-item d-flex justify-content-between align-items-center">${task.task} (${task.priority}) <span class="badge ${badgeClass} badge-pill">${badgeText}</span></li>`;
+      $("#task-list").append(listItem);
+    });
+  }
+  $.get("/tasks", function (response) {
+    response.tasks.forEach((task) => {
+      tasksFilter[task.status].push(task);
+    });
+    renderTaskList("");
+  });
+  
+  $("#status-filter").change(function () {
+    const status = $(this).val();
+    renderTaskList(status);
+  });
+</script>
+
+<%- include('partials/footer') -%>
